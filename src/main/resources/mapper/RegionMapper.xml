@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jzo2o.foundations.mapper.RegionMapper">
 
+    <select id="queryByRegionId" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            `serve`
+        WHERE
+            region_id = #{regionId}
+          AND
+            sale_status= 2
+    </select>
 </mapper>
