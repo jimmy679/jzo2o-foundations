@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.annotation.Resources;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -53,4 +54,23 @@ public class ServeController {
     public void onSale(@PathVariable("id") Long id) {
         iServeService.onSale(id);
     }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation("删除区域服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class),
+    })
+    public void delete(@NotNull(message = "id不能为空") @PathVariable("id") Long id) {
+        iServeService.deleteById(id);
+    }
+
+    @PutMapping("/offSale/{id}")
+    @ApiOperation("区域服务下架")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "服务id", required = true, dataTypeClass = Long.class),
+    })
+    public void offSale(@PathVariable("id") Long id) {
+        iServeService.offSale(id);
+    }
+
 }

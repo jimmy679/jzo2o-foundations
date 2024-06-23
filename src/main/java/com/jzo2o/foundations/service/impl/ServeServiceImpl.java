@@ -99,23 +99,62 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         }
         Integer saleStatus = serve.getSaleStatus();
         if(!(saleStatus==FoundationStatusEnum.INIT.getStatus() || saleStatus==FoundationStatusEnum.DISABLE.getStatus())){
-            throw  new ForbiddenOperationException("当前服务项状态不支持修改"+saleStatus);
+            throw new ForbiddenOperationException("当前服务项状态不支持修改"+saleStatus);
         }
         Long serveItemId = serve.getServeItemId();
         ServeItem serveItem = serveItemMapper.selectById(serveItemId);
-        if(ObjectUtils.isEmpty(serveItem)){
-            throw  new ForbiddenOperationException("所属服务项不存在");
+        if(ObjectUtils.isNull(serveItem)){
+            throw new ForbiddenOperationException("所属服务项不存在");
         }
         Integer activeStatus = serveItem.getActiveStatus();
-        if(activeStatus== FoundationStatusEnum.ENABLE.getStatus()){
-            throw  new ForbiddenOperationException("服务项为启用状态方可上架");
+        if(!(activeStatus== FoundationStatusEnum.ENABLE.getStatus())){
+            throw new ForbiddenOperationException("服务项为启用状态方可上架");
         }
         boolean update = lambdaUpdate()
                 .eq(Serve::getId, id)
-                .eq(Serve::getSaleStatus, FoundationStatusEnum.ENABLE.getStatus())
+                .set(Serve::getSaleStatus, FoundationStatusEnum.ENABLE.getStatus())
                 .update();
         if(!update){
             throw  new CommonException("启动服务失败--区域服务上架接口");
+        }
+        return baseMapper.selectById(id);
+    }
+
+    @Override
+    public Serve deleteById(Long id) {
+        //校验数据状态是否合法
+        Serve serve = baseMapper.selectById(id);
+        Integer saleStatus = serve.getSaleStatus();
+        if(saleStatus == FoundationStatusEnum.INIT.getStatus()){
+            throw  new ForbiddenOperationException("只有区域状态为草稿时才能删除！");
+        }
+        boolean update = lambdaUpdate()
+                .eq(Serve::getId, id)
+                .update();
+        if(!update){
+            throw  new CommonException("禁用失败！");
+        }
+        return baseMapper.selectById(id);
+    }
+
+    @Override
+    public Serve offSale(Long id) {
+        //数据合理性校验
+        Serve serve = baseMapper.selectById(id);
+        if(ObjectUtils.isEmpty(serve)){
+            throw  new ForbiddenOperationException("当前服务不存在！");
+        }
+        Integer saleStatus = serve.getSaleStatus();
+        if(!(saleStatus == FoundationStatusEnum.ENABLE.getStatus())){
+            throw  new ForbiddenOperationException("服务项只有在启用后才能下架！");
+        }
+        Long serveItemId = serve.getServeItemId();
+        boolean update = lambdaUpdate()
+                .eq(Serve::getId, id)
+                .set(Serve::getSaleStatus,FoundationStatusEnum.ENABLE.getStatus())
+                .update();
+        if(!update){
+            throw  new CommonException("下架服务失败！");
         }
         return baseMapper.selectById(id);
     }
