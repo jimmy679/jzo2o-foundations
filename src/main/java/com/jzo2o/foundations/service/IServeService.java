@@ -55,4 +55,16 @@ public interface IServeService extends IService<Serve> {
      *@Return
      */
     Serve offSale(Long id);
+
+    /*/**
+     *@Param 设置区域服务热门
+     *@Return
+     */
+    Serve onHot(Long id);
+
+    /*/**
+     *@Param 设置区域服务非热门
+     *@Return
+     */
+    Serve offHot(Long id);
 }

@@ -73,4 +73,23 @@ public class ServeController {
         iServeService.offSale(id);
     }
 
+
+    @PutMapping("/onHot/{id}")
+    @ApiOperation("区域服务热门设置")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "服务id", required = true, dataTypeClass = Long.class),
+    })
+    public void onHot(@PathVariable("id") Long id) {
+        iServeService.onHot(id);
+    }
+
+
+    @PutMapping("/offHot/{id}")
+    @ApiOperation("区域服务非热门设置")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "服务id", required = true, dataTypeClass = Long.class),
+    })
+    public void offHot(@PathVariable("id") Long id) {
+        iServeService.offHot(id);
+    }
 }

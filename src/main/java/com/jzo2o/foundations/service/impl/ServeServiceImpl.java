@@ -49,6 +49,9 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         return serveResDTOPageResult;
     }
 
+    private Integer HOT =1;
+    private Integer NOT_HOT =0;
+
     @Override
     public void batchAdd(List<ServeUpsertReqDTO> serveUpsertReqDTOList) {
         //合法性校验
@@ -155,6 +158,67 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
                 .update();
         if(!update){
             throw  new CommonException("下架服务失败！");
+        }
+        return baseMapper.selectById(id);
+    }
+
+    @Override
+    public Serve onHot(Long id) {
+        //先校验区域服务状态
+        Serve serve = baseMapper.selectById(id);
+        if(ObjectUtil.isNull(serve)){
+            throw new ForbiddenOperationException("区域服务不存在");
+        }
+        //校验区域服务状态
+        Integer saleStatus = serve.getSaleStatus();
+        if(saleStatus==FoundationStatusEnum.INIT.getStatus() || saleStatus==FoundationStatusEnum.DISABLE.getStatus()){
+            throw new ForbiddenOperationException("当前服务项状态不支持修改"+saleStatus);
+        }
+        Long serveItemId = serve.getServeItemId();
+        ServeItem serveItem = serveItemMapper.selectById(serveItemId);
+        if(ObjectUtils.isNull(serveItem)){
+            throw new ForbiddenOperationException("所属服务项不存在");
+        }
+        Integer activeStatus = serveItem.getActiveStatus();
+        if(!(activeStatus== FoundationStatusEnum.ENABLE.getStatus())){
+            throw new ForbiddenOperationException("服务项为启用状态方可设置热门");
+        }
+        boolean update = lambdaUpdate()
+                .eq(Serve::getId, id)
+                .set(Serve::getIsHot, HOT)
+                .update();
+        if(!update){
+            throw new CommonException("设置热门状态失败！");
+        }
+        return baseMapper.selectById(id);
+    }
+
+    public Serve offHot(Long id) {
+        //先校验区域服务状态
+        Serve serve = baseMapper.selectById(id);
+        if(ObjectUtil.isNull(serve)){
+            throw new ForbiddenOperationException("区域服务不存在");
+        }
+        //校验区域服务状态
+        Integer saleStatus = serve.getSaleStatus();
+        if(saleStatus==FoundationStatusEnum.INIT.getStatus() || saleStatus==FoundationStatusEnum.DISABLE.getStatus()){
+            throw new ForbiddenOperationException("当前服务项状态不支持修改"+saleStatus);
+        }
+        Long serveItemId = serve.getServeItemId();
+        ServeItem serveItem = serveItemMapper.selectById(serveItemId);
+        if(ObjectUtils.isNull(serveItem)){
+            throw new ForbiddenOperationException("所属服务项不存在");
+        }
+        Integer activeStatus = serveItem.getActiveStatus();
+        if(!(activeStatus== FoundationStatusEnum.ENABLE.getStatus())){
+            throw new ForbiddenOperationException("服务项为启用状态方可设置热门");
+        }
+        boolean update = lambdaUpdate()
+                .eq(Serve::getId, id)
+                .set(Serve::getIsHot, NOT_HOT)
+                .update();
+        if(!update){
+            throw new CommonException("设置热门状态失败！");
         }
         return baseMapper.selectById(id);
     }
