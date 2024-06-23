@@ -162,8 +162,10 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
         }
 
         //有区域在使用该服务将无法禁用（存在关联的区域服务且状态为上架表示有区域在使用该服务项）
-        //todo
-
+        Integer i = baseMapper.queryByServe_item_idAndStatus(id);
+        if (i>0){
+            throw new ForbiddenOperationException("当前服务项存在关联的区域服务且状态为上架！");
+        }
         //更新禁用状态
         LambdaUpdateWrapper<ServeItem> updateWrapper = Wrappers.<ServeItem>lambdaUpdate().eq(ServeItem::getId, id).set(ServeItem::getActiveStatus, FoundationStatusEnum.DISABLE.getStatus());
         update(updateWrapper);

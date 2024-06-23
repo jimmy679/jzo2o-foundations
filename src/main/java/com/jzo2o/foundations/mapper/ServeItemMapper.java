@@ -57,4 +57,10 @@ public interface ServeItemMapper extends BaseMapper<ServeItem> {
      * @return 服务项目录
      */
     List<ServeTypeCategoryResDTO> queryActiveServeItemCategory();
+
+    /*
+    查询是否有关联的服务项且为启用状态
+     */
+    Integer queryByServe_item_idAndStatus(@Param("id") Long id);
+
 }

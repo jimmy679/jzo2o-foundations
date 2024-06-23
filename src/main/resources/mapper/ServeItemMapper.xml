@@ -77,6 +77,16 @@
             type.sort_num,
             item.sort_num
     </select>
+    <select id="queryByServe_item_idAndStatus" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            `serve_item` AS A
+                INNER JOIN serve AS B ON B.serve_item_id = A.id
+        WHERE
+            A.id = #{id}
+          AND B.sale_status =2
+    </select>
 
     <!--手动的映射-->
     <resultMap id="ServeItemCategoryMap" type="com.jzo2o.api.foundations.dto.response.ServeTypeCategoryResDTO">
