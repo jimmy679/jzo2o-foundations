@@ -24,6 +24,7 @@ import com.jzo2o.foundations.service.IServeService;
 import com.jzo2o.mysql.utils.PageHelperUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,13 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
 
     @Resource
     private RegionMapper regionMapper;
+
+
+    @Cacheable(value = RedisConstants.CacheName.SERVE,key = "#id",cacheManager = RedisConstants.CacheManager.ONE_DAY)
+    @Override
+    public Serve queryServeByIdCache(Long id) {
+        return getById(id);
+    }
 
     /**
      * 分页查询

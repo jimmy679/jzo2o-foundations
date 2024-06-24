@@ -20,6 +20,13 @@ import java.util.List;
  */
 public interface IServeService extends IService<Serve> {
 
+
+    /**
+     * 查询区域服务信息并进行缓存
+     * @param id 对应serve表的主键
+     * @return 区域服务信息
+     */
+    Serve queryServeByIdCache(Long id);
     /**
      * 分页查询服务列表
      * @param servePageQueryReqDTO 查询条件
