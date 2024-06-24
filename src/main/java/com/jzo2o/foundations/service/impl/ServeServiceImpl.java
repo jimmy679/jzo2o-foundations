@@ -125,6 +125,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
     }
 
     @Override
+    @CachePut(value = RedisConstants.CacheName.SERVE, key = "#id",  cacheManager = RedisConstants.CacheManager.ONE_DAY)
     @Transactional
     public Serve onSale(Long id){
         Serve serve = baseMapper.selectById(id);
@@ -160,6 +161,7 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
     }
 
     @Override
+    @CachePut(value = RedisConstants.CacheName.SERVE, key = "#id" )
     @Transactional
     public Serve offSale(Long id){
         Serve serve = baseMapper.selectById(id);
