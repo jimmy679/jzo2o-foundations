@@ -45,11 +45,12 @@ import java.util.List;
 public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem> implements IServeItemService {
     @Resource
     private IServeSyncService serveSyncService;
+    @Resource
+    private IServeService serveService;
 
     @Resource
     private ServeTypeMapper serveTypeMapper;
-    @Resource
-    private IServeService serveService;
+
     /**
      * 服务项新增
      *
@@ -162,7 +163,6 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
         if (!(FoundationStatusEnum.ENABLE.getStatus() == activeStatus)) {
             throw new ForbiddenOperationException("启用状态方可禁用");
         }
-
         //有区域在使用该服务将无法禁用（存在关联的区域服务且状态为上架表示有区域在使用该服务项）
         int count = serveService.queryServeCountByServeItemIdAndSaleStatus(id, FoundationStatusEnum.ENABLE.getStatus());
         if (count > 0) {
